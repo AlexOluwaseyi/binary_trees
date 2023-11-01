@@ -1,6 +1,8 @@
 #include "binary_trees.h"
 #include <stdlib.h>
 
+int free_queue(binary_tree_t **q);
+
 /**
  * binary_tree_is_complete - Checks if a binary tree is complete.
  *
@@ -25,20 +27,14 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 		if (current->left)
 		{
 			if (is_last_level == 0)
-			{
-				free(queue);
-				return (0);
-			}
+				return free_queue(queue);
 			queue[rear++] = current->left;
 		} else
 			is_last_level = 0;
 		if (current->right)
 		{
 			if (is_last_level == 0)
-			{
-				free(queue);
-				return (0);
-			}
+				return free_queue(queue);
 			queue[rear++] = current->right;
 		} else
 			is_last_level = 0;
@@ -46,11 +42,20 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 	for (i = last_level; i < rear; i++)
 	{
 		if (queue[i]->left || queue[i]->right)
-		{
-			free(queue);
-			return (0);
-		}
+			return free_queue(queue);
 	}
 	free(queue);
 	return (1);
+}
+
+/**
+ * free_queue - Helper function to free queue
+ * @q: Pointer to queue to be freed
+ * Return: 0 on success.
+ */
+
+int free_queue(binary_tree_t **q)
+{
+	free(q);
+	return (0);
 }
