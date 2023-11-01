@@ -27,14 +27,14 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 		if (current->left)
 		{
 			if (is_last_level == 0)
-				return free_queue(queue);
+				return (free_queue(queue));
 			queue[rear++] = current->left;
 		} else
 			is_last_level = 0;
 		if (current->right)
 		{
 			if (is_last_level == 0)
-				return free_queue(queue);
+				return (free_queue(queue));
 			queue[rear++] = current->right;
 		} else
 			is_last_level = 0;
@@ -42,7 +42,7 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 	for (i = last_level; i < rear; i++)
 	{
 		if (queue[i]->left || queue[i]->right)
-			return free_queue(queue);
+			return (free_queue(queue));
 	}
 	free(queue);
 	return (1);
