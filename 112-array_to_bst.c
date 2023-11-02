@@ -5,13 +5,13 @@
  *
  * @tree: Pointer to the root node of the tree to delete.
  */
-void binary_tree_delete(binary_tree_t *tree)
+void binary_tree_delete2(binary_tree_t *tree)
 {
 	if (tree == NULL)
 		return;
 
-	binary_tree_delete(tree->left);
-	binary_tree_delete(tree->right);
+	binary_tree_delete2(tree->left);
+	binary_tree_delete2(tree->right);
 
 	free(tree);
 }
@@ -36,7 +36,7 @@ bst_t *array_to_bst(int *array, size_t size)
 	{
 		if (bst_insert(&root, array[i]) == NULL)
 		{
-			binary_tree_delete(root);
+			binary_tree_delete2(root);
 			return (NULL);
 		}
 	}
