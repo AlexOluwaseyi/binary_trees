@@ -1,4 +1,5 @@
 #include "binary_trees.h"
+#include <stdlib.h>
 
 /**
  * binary_tree_node - Creates a binary tree node
@@ -25,81 +26,80 @@ binary_tree_t *binary_tree_node(binary_tree_t *parent, int value)
 }
 
 /**
- * heapify - Maintain the Max Heap property after insertion.
- * @new_node: The newly inserted node.
+ * max_heapify - ensures the Max Heap property is maintained
+ * @root: pointer to the root of the binary heap
  */
-void heapify(heap_t *new_node)
+void max_heapify(heap_t *root)
 {
-	heap_t *temp;
 	int value;
+	heap_t *largest, *left, *right;
 
-	temp = new_node;
-	value = temp->n;
+	if (!root)
+		return;
 
-	while (temp->parent && value > temp->parent->n)
+	largest = root;
+	left = root->left;
+	right = root->right;
+
+	if (left && left->n > largest->n)
+		largest = left;
+
+	if (right && right->n > largest->n)
+		largest = right;
+
+	if (largest != root)
 	{
-		temp->n = temp->parent->n;
-		temp->parent->n = value;
-		temp = temp->parent;
+		value = root->n;
+		root->n = largest->n;
+		largest->n = value;
+		max_heapify(largest);
 	}
-	new_node = temp;
 }
 
 /**
- * get_last_node - Get the last level-order node in the Max Binary Heap.
- * @root: Pointer to the root of the heap.
- *
- * Return: Pointer to the last level-order node.
- */
-heap_t *get_last_node(heap_t *root)
-{
-	heap_t *last_node = root;
-
-	while (last_node && last_node->left)
-	{
-		if (last_node->right)
-			last_node = last_node->right;
-		else
-			last_node = last_node->left;
-	}
-	return (last_node);
-}
-
-/**
- * heap_extract - Extracts the root node from a Max Binary Heap.
- * @root: A double pointer to the root of the heap.
- *
- * Return: The value stored in the root node.
- *         0 on failure or if the heap is empty.
- */
+ * heap_extract - extracts the root node from a Max Binary Heap
+ * @root: pointer to the heap root
+ * Return: value of the extracted node
+ **/
 int heap_extract(heap_t **root)
 {
-	int extracted_value;
-	heap_t *last_node;
+	int value;
+	heap_t *heap_root, *last_node;
 
-	if (root == NULL || *root == NULL)
+	if (!root || !*root)
 		return (0);
 
-	extracted_value = (*root)->n;
-	last_node = get_last_node(*root);
+	heap_root = *root;
+	value = heap_root->n;
 
-	if (*root == last_node)
+	if (!heap_root->left && !heap_root->right)
 	{
-		free(*root);
+		free(heap_root);
 		*root = NULL;
-		return (extracted_value);
+		return (value);
 	}
 
-	if (last_node->parent->right)
-		last_node->parent->right = NULL;
+	last_node = *root;
+	while (last_node->left)
+	{
+		if (!last_node->left->left || !last_node->left->right)
+			break;
+		last_node = last_node->left;
+	}
+
+	if (last_node->right)
+	{
+		heap_root->n = last_node->right->n;
+		free(last_node->right);
+		last_node->right = NULL;
+	}
 	else
-		last_node->parent->left = NULL;
+	{
+		heap_root->n = last_node->left->n;
+		free(last_node->left);
+		last_node->left = NULL;
+	}
 
-	(*root)->n = last_node->n;
-	free(last_node);
-
-	/* Rebuild the Max Heap if necessary */
-	heapify(*root);
-
-	return (extracted_value);
+	max_heapify(heap_root);
+	return (value);
 }
