@@ -62,7 +62,7 @@ heap_t *get_last_node(heap_t *root)
 		else
 			last_node = last_node->left;
 	}
-	return last_node;
+	return (last_node);
 }
 
 /**
@@ -74,17 +74,20 @@ heap_t *get_last_node(heap_t *root)
  */
 int heap_extract(heap_t **root)
 {
-	if (root == NULL || *root == NULL)
-		return 0;
+	int extracted_value;
+	heap_t *last_node;
 
-	int extracted_value = (*root)->n;
-	heap_t *last_node = get_last_node(*root);
+	if (root == NULL || *root == NULL)
+		return (0);
+
+	extracted_value = (*root)->n;
+	last_node = get_last_node(*root);
 
 	if (*root == last_node)
 	{
 		free(*root);
 		*root = NULL;
-		return extracted_value;
+		return (extracted_value);
 	}
 
 	if (last_node->parent->right)
@@ -98,6 +101,5 @@ int heap_extract(heap_t **root)
 	/* Rebuild the Max Heap if necessary */
 	heapify(*root);
 
-	return extracted_value;
+	return (extracted_value);
 }
-
