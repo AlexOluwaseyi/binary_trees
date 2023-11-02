@@ -9,8 +9,11 @@
  */
 avl_t *avl_remove(avl_t *root, int value)
 {
+	avl_t *temp;
+	int balance;
+
 	if (root == NULL)
-		return NULL;
+		return (NULL);
 
 	if (value < root->n)
 		root->left = avl_remove(root->left, value);
@@ -20,33 +23,32 @@ avl_t *avl_remove(avl_t *root, int value)
 	{
 		if (root->left == NULL || root->right == NULL)
 		{
-			avl_t *temp = (root->left) ? root->left : root->right;
+			temp = (root->left) ? root->left : root->right;
 			free(root);
-			return temp;
-		}
-		else
+			return (temp);
+		} else
 		{
-			avl_t *temp = root->right;
+			temp = root->right;
 			while (temp->left)
 				temp = temp->left;
 			root->n = temp->n;
 			root->right = avl_remove(root->right, temp->n);
 		}
 	}
-	int balance = binary_tree_balance(root);
+	balance = binary_tree_balance(root);
 	if (balance > 1 && binary_tree_balance(root->left) >= 0)
-		return binary_tree_rotate_right(root);
+		return (binary_tree_rotate_right(root));
 	if (balance < -1 && binary_tree_balance(root->right) <= 0)
-		return binary_tree_rotate_left(root);
+		return (binary_tree_rotate_left(root));
 	if (balance > 1 && binary_tree_balance(root->left) < 0)
 	{
 		root->left = binary_tree_rotate_left(root->left);
-		return binary_tree_rotate_right(root);
+		return (binary_tree_rotate_right(root));
 	}
 	if (balance < -1 && binary_tree_balance(root->right) > 0)
 	{
 		root->right = binary_tree_rotate_right(root->right);
-		return binary_tree_rotate_left(root);
+		return (binary_tree_rotate_left(root));
 	}
-	return root;
+	return (root);
 }
